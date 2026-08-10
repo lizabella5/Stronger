@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#536b5b">
+<title>STRONGER</title>
+<style>
+body{margin:0;background:#f5f1ea;color:#252525;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{padding:30px 20px 16px;background:#f5f1ea;position:sticky;top:0}h1{margin:0;letter-spacing:.08em}main{max-width:700px;margin:auto;padding:10px 16px 40px}
+.card{background:#fffdf9;border:1px solid #e3ddd4;border-radius:18px;padding:18px;margin:12px 0}
+button{border:0;border-radius:12px;padding:12px;font:inherit}button.primary{background:#536b5b;color:white;width:100%}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.secondary{background:#d8e1d7}.muted{color:#77716a;font-size:13px}
+.metric{border:1px solid #e3ddd4;border-radius:14px;padding:14px}.big{font-size:25px;font-weight:700}
+input,textarea{width:100%;box-sizing:border-box;padding:10px;border:1px solid #ddd;border-radius:9px;font:inherit}
+</style></head>
+<body>
+<header><h1>STRONGER</h1><div class="muted">build capability • track evidence • keep going</div></header>
+<main>
+<section class="card"><h2>Your aim</h2><p>Build a strong, lean, capable body and become a person who runs.</p><b>12-week challenge</b><p>Complete 5 km using the run/walk pattern I build.</p></section>
+<section class="card"><h2>This week</h2><div class="grid">
+<div class="metric"><div class="muted">Strength</div><div class="big" id="strength">0/3</div></div>
+<div class="metric"><div class="muted">Jogging</div><div class="big" id="jog">0/2</div></div>
+<div class="metric"><div class="muted">Mobility</div><div class="big" id="mobility">0/4</div></div>
+<div class="metric"><div class="muted">Movement</div><div class="big" id="movement">0/7</div></div>
+</div></section>
+<section class="card"><h2>Start a session</h2><div class="grid">
+<button class="secondary" onclick="log('Strength')">Gym A — Lower</button>
+<button class="secondary" onclick="log('Strength')">Gym B — Upper + Core</button>
+<button class="secondary" onclick="log('Strength')">Gym C — Full Body</button>
+<button class="secondary" onclick="log('Jogging')">Jog 1</button>
+<button class="secondary" onclick="log('Jogging')">Jog 2</button>
+<button class="secondary" onclick="log('Mobility')">Mobility</button>
+<button class="secondary" onclick="log('Movement')">Movement</button>
+<button class="secondary" onclick="log('Rest')">Rest day</button>
+</div></section>
+<section class="card"><h2>Weekly photo 📸</h2><p class="muted">Same place, lighting and clothes where possible. Relaxed posture.</p>
+<input id="photo" type="file" accept="image/*"><br><br>
+<textarea id="note" placeholder="How do I feel in my body this week?"></textarea><br><br>
+<button class="primary" onclick="savePhoto()">SAVE CHECK-IN</button></section>
+<section class="card"><h2>Progress</h2><p id="history" class="muted">No sessions yet. Your first one will appear here.</p></section>
+</main>
+<script>
+let data=JSON.parse(localStorage.getItem("stronger_simple")||'{"Strength":0,"Jogging":0,"Mobility":0,"Movement":0,"history":[]}');
+function save(){localStorage.setItem("stronger_simple",JSON.stringify(data));update()}
+function log(type){if(type!=="Rest")data[type]++;data.history.unshift(new Date().toLocaleDateString()+" — "+type);save();alert(type==="Rest"?"Rest day recorded.":"Session recorded ✓")}
+function update(){
+document.getElementById("strength").textContent=Math.min(data.Strength,3)+"/3";
+document.getElementById("jog").textContent=Math.min(data.Jogging,2)+"/2";
+document.getElementById("mobility").textContent=Math.min(data.Mobility,4)+"/4";
+document.getElementById("movement").textContent=Math.min(data.Movement,7)+"/7";
+document.getElementById("history").innerHTML=data.history.slice(0,12).join("<br>")||"No sessions yet.";
+}
+function savePhoto(){
+let note=document.getElementById("note").value;
+data.history.unshift(new Date().toLocaleDateString()+" — Weekly photo check-in"+(note?" — "+note:""));
+save();document.getElementById("note").value="";alert("Check-in saved 📸")
+}
+update();
+</script>
+</body></html>
