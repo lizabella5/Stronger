@@ -2,59 +2,77 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#536b5b">
 <title>STRONGER</title>
 <style>
-body{margin:0;background:#f5f1ea;color:#252525;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-header{padding:30px 20px 16px;background:#f5f1ea;position:sticky;top:0}h1{margin:0;letter-spacing:.08em}main{max-width:700px;margin:auto;padding:10px 16px 40px}
-.card{background:#fffdf9;border:1px solid #e3ddd4;border-radius:18px;padding:18px;margin:12px 0}
-button{border:0;border-radius:12px;padding:12px;font:inherit}button.primary{background:#536b5b;color:white;width:100%}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.secondary{background:#d8e1d7}.muted{color:#77716a;font-size:13px}
-.metric{border:1px solid #e3ddd4;border-radius:14px;padding:14px}.big{font-size:25px;font-weight:700}
-input,textarea{width:100%;box-sizing:border-box;padding:10px;border:1px solid #ddd;border-radius:9px;font:inherit}
-</style></head>
+:root{--bg:#f5f1ea;--card:#fffdf9;--ink:#252525;--muted:#77716a;--line:#e3ddd4;--accent:#536b5b;--accent2:#d8e1d7}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{padding:28px 20px 14px;background:rgba(245,241,234,.96);position:sticky;top:0;z-index:3}
+h1{margin:0;font-size:30px;letter-spacing:.08em}h2{font-size:20px;margin:8px 0 14px}h3{font-size:16px;margin:0 0 6px}
+nav{display:flex;gap:8px;overflow:auto;padding:10px 16px;background:var(--bg);position:sticky;top:77px;z-index:2}
+nav button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:9px 14px;color:var(--ink)}
+nav button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+main{max-width:720px;margin:auto;padding:8px 16px 40px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin:12px 0;box-shadow:0 2px 10px #00000005}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.metric{padding:14px;border:1px solid var(--line);border-radius:14px}.big{font-size:26px;font-weight:700}.muted{color:var(--muted);font-size:13px}
+button.primary{width:100%;background:var(--accent);color:#fff;border:0;border-radius:13px;padding:14px;font-size:16px;font-weight:650}
+button.secondary{background:var(--accent2);border:0;border-radius:10px;padding:10px 12px}.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.exercise{padding:14px 0;border-top:1px solid var(--line)}.sets{display:grid;grid-template-columns:32px 1fr 1fr;gap:7px;align-items:center;margin-top:9px}
+input,textarea{font:inherit;border:1px solid var(--line);border-radius:9px;padding:9px;background:#fff;width:100%}
+progress{width:100%;height:10px;accent-color:var(--accent)}.photo{border:1px dashed #aaa;border-radius:14px;padding:14px;margin-top:10px}
+.pill{display:inline-block;background:var(--accent2);padding:5px 9px;border-radius:999px;font-size:12px}
+footer{color:var(--muted);text-align:center;font-size:12px;padding:20px}
+</style>
+</head>
 <body>
 <header><h1>STRONGER</h1><div class="muted">build capability • track evidence • keep going</div></header>
-<main>
-<section class="card"><h2>Your aim</h2><p>Build a strong, lean, capable body and become a person who runs.</p><b>12-week challenge</b><p>Complete 5 km using the run/walk pattern I build.</p></section>
-<section class="card"><h2>This week</h2><div class="grid">
-<div class="metric"><div class="muted">Strength</div><div class="big" id="strength">0/3</div></div>
-<div class="metric"><div class="muted">Jogging</div><div class="big" id="jog">0/2</div></div>
-<div class="metric"><div class="muted">Mobility</div><div class="big" id="mobility">0/4</div></div>
-<div class="metric"><div class="muted">Movement</div><div class="big" id="movement">0/7</div></div>
-</div></section>
-<section class="card"><h2>Start a session</h2><div class="grid">
-<button class="secondary" onclick="log('Strength')">Gym A — Lower</button>
-<button class="secondary" onclick="log('Strength')">Gym B — Upper + Core</button>
-<button class="secondary" onclick="log('Strength')">Gym C — Full Body</button>
-<button class="secondary" onclick="log('Jogging')">Jog 1</button>
-<button class="secondary" onclick="log('Jogging')">Jog 2</button>
-<button class="secondary" onclick="log('Mobility')">Mobility</button>
-<button class="secondary" onclick="log('Movement')">Movement</button>
-<button class="secondary" onclick="log('Rest')">Rest day</button>
-</div></section>
-<section class="card"><h2>Weekly photo 📸</h2><p class="muted">Same place, lighting and clothes where possible. Relaxed posture.</p>
-<input id="photo" type="file" accept="image/*"><br><br>
-<textarea id="note" placeholder="How do I feel in my body this week?"></textarea><br><br>
-<button class="primary" onclick="savePhoto()">SAVE CHECK-IN</button></section>
-<section class="card"><h2>Progress</h2><p id="history" class="muted">No sessions yet. Your first one will appear here.</p></section>
-</main>
+<nav id="nav"></nav><main id="app"></main>
+<footer>Your workout data and photos stay in this browser. They are not uploaded to GitHub.</footer>
 <script>
-let data=JSON.parse(localStorage.getItem("stronger_simple")||'{"Strength":0,"Jogging":0,"Mobility":0,"Movement":0,"history":[]}');
-function save(){localStorage.setItem("stronger_simple",JSON.stringify(data));update()}
-function log(type){if(type!=="Rest")data[type]++;data.history.unshift(new Date().toLocaleDateString()+" — "+type);save();alert(type==="Rest"?"Rest day recorded.":"Session recorded ✓")}
-function update(){
-document.getElementById("strength").textContent=Math.min(data.Strength,3)+"/3";
-document.getElementById("jog").textContent=Math.min(data.Jogging,2)+"/2";
-document.getElementById("mobility").textContent=Math.min(data.Mobility,4)+"/4";
-document.getElementById("movement").textContent=Math.min(data.Movement,7)+"/7";
-document.getElementById("history").innerHTML=data.history.slice(0,12).join("<br>")||"No sessions yet.";
+const KEY="stronger_v11";
+const workouts={
+"Gym A — Lower":[["Incline walk","time"],["Leg press","weight"],["Leg extension","weight"],["Calf raises","weight"],["Goblet squat","weight"],["Glute bridges","weight"],["Dead bugs","reps"]],
+"Gym B — Upper + Core":[["Incline walk","time"],["Lat pulldown","weight"],["Lateral raise","weight"],["Triceps pushdown","weight"],["Glute bridges","weight"],["Bird dogs","reps"],["Side plank","time"]],
+"Gym C — Full Body":[["Incline walk","time"],["Leg press","weight"],["Lat pulldown","weight"],["Leg extension","weight"],["Calf raises","weight"],["Glute bridges","weight"],["Core","reps"]]
+};
+let data=JSON.parse(localStorage.getItem(KEY)||"null")||{aim:"Build a strong, lean, capable body and become a person who runs.",challenge:"Complete 5 km using the run/walk pattern I build.",sessions:[],photos:[]};
+function save(){localStorage.setItem(KEY,JSON.stringify(data))}
+function esc(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function weekStart(){let d=new Date(),day=(d.getDay()+6)%7;d.setHours(0,0,0,0);d.setDate(d.getDate()-day);return d}
+function weekly(t){return data.sessions.filter(s=>s.type===t&&new Date(s.date)>=weekStart()).length}
+function strengthCount(){return data.sessions.filter(s=>s.type.startsWith("Gym")&&new Date(s.date)>=weekStart()).length}
+function nav(a){document.getElementById("nav").innerHTML=["Today","Progress","Challenge","Photos"].map(x=>`<button class="${a===x?"active":""}" onclick="render('${x}')">${x}</button>`).join("")}
+function render(p="Today"){nav(p);({Today:today,Progress:progress,Challenge:challenge,Photos:photos}[p])(document.getElementById("app"))}
+function metric(a,b){return `<div class="metric"><div class="muted">${a}</div><div class="big">${b}</div></div>`}
+function today(a){
+a.innerHTML=`<section class="card"><h2>Your aim</h2><p>${esc(data.aim)}</p><span class="pill">12-week challenge</span><p><b>${esc(data.challenge)}</b></p></section>
+<section class="card"><h2>This week</h2><div class="grid">${metric("Strength",Math.min(strengthCount(),3)+"/3")}${metric("Jogging",Math.min(weekly("Jogging"),2)+"/2")}${metric("Movement",Math.min(weekly("Movement"),7)+"/7")}${metric("Mobility",Math.min(weekly("Mobility"),4)+"/4")}</div></section>
+<section class="card"><h2>Today's training</h2><div class="grid">${Object.keys(workouts).map(x=>`<button class="secondary" onclick="startGym('${x}')">${x}</button>`).join("")}<button class="secondary" onclick="startJog()">🏃 Jog</button><button class="secondary" onclick="quick('Movement')">🚶 Movement</button><button class="secondary" onclick="quick('Mobility')">🧘 Mobility</button><button class="secondary" onclick="quick('Rest')">😴 Rest day</button></div></section>
+<section class="card"><h2>What counts as movement?</h2><p>Dog walk, ordinary walk, DIY, painting, swimming, cycling, errands — anything that gets you moving counts.</p></section>`;
 }
-function savePhoto(){
-let note=document.getElementById("note").value;
-data.history.unshift(new Date().toLocaleDateString()+" — Weekly photo check-in"+(note?" — "+note:""));
-save();document.getElementById("note").value="";alert("Check-in saved 📸")
+function quick(t){data.sessions.push({date:new Date().toISOString(),type:t,inputs:{},note:""});save();render("Today")}
+function previous(name){for(const s of data.sessions.slice().reverse())if(s.exercises&&s.exercises[name])return s.exercises[name];return null}
+function startGym(type){
+document.getElementById("app").innerHTML=`<section class="card"><div class="row"><div><h2>${type}</h2><small>Use last time as your guide. You can stop early.</small></div><button class="secondary" onclick="render('Today')">Exit</button></div>
+${workouts[type].map((e,i)=>{let p=previous(e[0]),unit=e[1]==="weight"?"kg":e[1]==="time"?"sec":"reps";return `<div class="exercise"><h3>${e[0]}</h3>${p?`<div class="muted">Last: ${esc(p.map(x=>x.value+" "+unit+" × "+x.reps).join(" • "))}</div>`:"<div class='muted'>First time — set your baseline.</div>"}<div class="sets">${[1,2,3].map(n=>`<span>${n}</span><input id="w_${i}_${n}" type="number" step=".5" placeholder="${unit}"><input id="r_${i}_${n}" type="number" placeholder="reps">`).join("")}</div></div>`}).join("")}
+<div class="exercise"><label>How did it feel?<input id="note" placeholder="strong, tired, enjoyable..."></label></div><button class="primary" onclick="finishGym('${type}')">FINISH SESSION</button></section>`;
 }
-update();
+function finishGym(type){
+let exs={};workouts[type].forEach((e,i)=>{let arr=[];[1,2,3].forEach(n=>{let v=document.getElementById(`w_${i}_${n}`).value,r=document.getElementById(`r_${i}_${n}`).value;if(v||r)arr.push({value:v,reps:r})});if(arr.length)exs[e[0]]=arr});
+data.sessions.push({date:new Date().toISOString(),type,exercises:exs,note:document.getElementById("note")?.value||""});save();render("Today");
+}
+function startJog(){document.getElementById("app").innerHTML=`<section class="card"><h2>🏃 Run / Walk</h2><p><b>Starting programme</b></p><div class="grid"><label>Run<input id="run" type="number" value="30"> sec</label><label>Walk<input id="walk" type="number" value="90"> sec</label><label>Rounds<input id="rounds" type="number" value="6"></label><label>Completed<input id="done" type="number" value="0"></label></div><p class="muted">Build the running habit gradually. No need to smash yourself.</p><button class="primary" onclick="finishJog()">FINISH RUN</button></section>`}
+function finishJog(){data.sessions.push({date:new Date().toISOString(),type:"Jogging",inputs:{run:run.value,walk:walk.value,rounds:rounds.value,done:done.value}});save();render("Today")}
+function progress(a){
+let names=[...new Set(Object.values(workouts).flat().map(x=>x[0]))],html=`<section class="card"><h2>Strength progress</h2><p class="muted">Best logged working weight.</p>`;
+names.forEach(n=>{let best=0;data.sessions.forEach(s=>(s.exercises?.[n]||[]).forEach(x=>{let v=parseFloat(x.value);if(v>best)best=v}));html+=`<div class="row" style="padding:10px 0;border-top:1px solid var(--line)"><span>${n}</span><b>${best?best+" kg":"—"}</b></div>`});
+a.innerHTML=html+`</section><section class="card"><h2>Recent sessions</h2>${data.sessions.slice(-20).reverse().map(s=>`<div class="row" style="padding:9px 0;border-top:1px solid var(--line)"><span>${esc(s.type)}</span><small>${new Date(s.date).toLocaleDateString()}</small></div>`).join("")||"<p class='muted'>No sessions yet.</p>"}</section>`;
+}
+function challenge(a){let n=data.sessions.filter(s=>s.type.startsWith("Gym")||s.type==="Jogging").length,w=Math.min(12,Math.floor(n/2));a.innerHTML=`<section class="card"><h2>12-week challenge</h2><p><b>${esc(data.challenge)}</b></p><p>Training accumulation: ${w} / 12 weeks</p><progress max="12" value="${w}"></progress></section><section class="card"><h2>The rule</h2><p><b>Train → eat → recover → repeat.</b></p><p class="muted">Consistency, not punishment.</p></section><section class="card"><h2>Edit your aim</h2><label>Aim<textarea id="aim">${esc(data.aim)}</textarea></label><br><br><label>Challenge<textarea id="ch">${esc(data.challenge)}</textarea></label><br><br><button class="primary" onclick="editAim()">SAVE</button></section>`}
+function editAim(){data.aim=aim.value;data.challenge=ch.value;save();render("Challenge")}
+function photos(a){a.innerHTML=`<section class="card"><h2>Weekly photo check-in 📸</h2><p>Photos are stored only in this browser. They are <b>not uploaded to GitHub</b>.</p><p class="muted">Same place, lighting and clothes where possible. Relaxed posture.</p><input id="file" type="file" accept="image/*" multiple><div style="margin-top:10px"><textarea id="pnote" placeholder="How do I feel in my body this week?"></textarea></div><br><button class="primary" onclick="savePhoto()">SAVE CHECK-IN</button></section><section class="card"><h2>Check-ins</h2>${data.photos.slice().reverse().map(p=>`<div class="photo"><b>${new Date(p.date).toLocaleDateString()}</b><p>${esc(p.note)}</p>${(p.images||[]).map(i=>`<img src="${i}" style="max-width:100%;border-radius:10px;margin-top:6px">`).join("")}</div>`).join("")||"<p class='muted'>Your first check-in will appear here.</p>"}</section>`}
+function savePhoto(){let files=[...file.files],note=pnote.value;if(!files.length){data.photos.push({date:new Date().toISOString(),note,images:[]});save();render("Photos");return}let imgs=[],left=files.length;files.forEach(f=>{let r=new FileReader();r.onload=()=>{imgs.push(r.result);if(--left===0){data.photos.push({date:new Date().toISOString(),note,images:imgs});save();render("Photos")}};r.readAsDataURL(f)})}
+render();
 </script>
-</body></html>
+</body>
+</html>
