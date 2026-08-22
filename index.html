@@ -35,7 +35,41 @@ const plan={
 "Gym B — Upper + Core":["Incline walk","Lat pulldown","Lateral raise","Triceps pushdown","Glute bridges","Bird dogs","Side plank"],
 "Gym C — Full Body":["Incline walk","Leg press","Lat pulldown","Leg extension","Calf raises","Glute bridges","Core"],
 "Gym D — Lower + Core + Incline":["Leg press","Romanian deadlift","Goblet squat","Hamstring curl","Hip abductor","Dead bugs","Bird dogs","Pallof press","Glute bridge march","Plank","Incline treadmill"],
-"Jog 1":["Run/walk intervals"],"Jog 2":["Run/walk intervals"]
+"Gym E — Upper + Core + Incline":["Lat pulldown","Seated cable row","Chest press","Dumbbell shoulder press","Triceps pushdown","Bicep curls","Dead bugs","Bird dogs","Pallof press","Plank","Side plank","Incline treadmill"],
+"Gym F — Upper + Core 2":["Seated cable row","Chest press","Lat pulldown","Lateral raise","Triceps pushdown","Bicep curls","Dead bugs","Pallof press","Side plank","Incline treadmill"],
+"Gym G — Upper + Core 3":["Lat pulldown","Chest press","Seated cable row","Dumbbell shoulder press","Lateral raise","Triceps pushdown","Bird dogs","Dead bugs","Plank","Incline treadmill"],
+"Gym H — Lower + Core 2":["Leg press","Goblet squat","Hamstring curl","Leg extension","Calf raises","Glute bridges","Dead bugs","Pallof press","Plank","Incline treadmill"],
+"Gym I — Lower + Core 3":["Romanian deadlift","Leg press","Hamstring curl","Hip abductor","Goblet squat","Calf raises","Bird dogs","Glute bridge march","Side plank","Incline treadmill"],
+"Jog 1 — First Steps":["Run/walk intervals"],
+"Jog 2 — Build the Habit":["Run/walk intervals"],
+"Jog 3 — Longer Jog Repeats":["Run/walk intervals"],
+"Jog 4 — Towards Running":["Run/walk intervals"]
+};
+const exerciseNotes={
+"Gym D — Lower + Core + Incline":{
+"Leg press":"3 × 10–12","Romanian deadlift":"3 × 10 • 15 kg long dumbbell is fine","Goblet squat":"3 × 10–12","Hamstring curl":"3 × 10–12","Hip abductor":"3 × 12–15","Dead bugs":"2 rounds • 8 each side","Bird dogs":"2 rounds • 8 each side","Pallof press":"2 rounds • 10 each side","Glute bridge march":"2 rounds • 8–10 each side","Plank":"2 rounds • 30–45 sec"
+},
+"Gym E — Upper + Core + Incline":{
+"Lat pulldown":"3 × 10","Seated cable row":"3 × 10","Chest press":"3 × 10","Dumbbell shoulder press":"3 × 8–10","Triceps pushdown":"2–3 × 10–12","Bicep curls":"2–3 × 10–12","Dead bugs":"2 rounds • 8 each side","Bird dogs":"2 rounds • 8 each side","Pallof press":"2 rounds • 10 each side","Plank":"2 rounds • 30–45 sec","Side plank":"2 rounds • 20–30 sec each side"
+},
+"Gym F — Upper + Core 2":{
+"Seated cable row":"3 × 10–12","Chest press":"3 × 10","Lat pulldown":"3 × 10","Lateral raise":"3 × 10–12 • light and controlled","Triceps pushdown":"2–3 × 10–12","Bicep curls":"2–3 × 10–12","Dead bugs":"2 rounds • 8 each side","Pallof press":"2 rounds • 10 each side","Side plank":"2 rounds • 20–30 sec each side"
+},
+"Gym G — Upper + Core 3":{
+"Lat pulldown":"3 × 8–10","Chest press":"3 × 10–12","Seated cable row":"3 × 10","Dumbbell shoulder press":"3 × 8–10","Lateral raise":"2 × 10–12","Triceps pushdown":"2 × 10–12","Bird dogs":"2 rounds • 8 each side","Dead bugs":"2 rounds • 8 each side","Plank":"2 rounds • 30–45 sec"
+},
+"Gym H — Lower + Core 2":{
+"Leg press":"3 × 10–12","Goblet squat":"3 × 10","Hamstring curl":"3 × 10–12","Leg extension":"3 × 10–12","Calf raises":"3 × 12–15","Glute bridges":"3 × 12","Dead bugs":"2 rounds • 8 each side","Pallof press":"2 rounds • 10 each side","Plank":"2 rounds • 30–45 sec"
+},
+"Gym I — Lower + Core 3":{
+"Romanian deadlift":"3 × 10 • slow lowering","Leg press":"3 × 10","Hamstring curl":"3 × 10–12","Hip abductor":"3 × 12–15","Goblet squat":"3 × 10","Calf raises":"3 × 12–15","Bird dogs":"2 rounds • 8 each side","Glute bridge march":"2 rounds • 8 each side","Side plank":"2 rounds • 20–30 sec each side"
+}
+};
+const runPlans={
+"Jog 1 — First Steps":{run:30,walk:90,rounds:8,note:"5 min brisk walk warm-up • 8 × (30 sec very easy jog + 90 sec walk) • 5 min easy walk cool-down. Repeat this session until your legs feel comfortable afterwards."},
+"Jog 2 — Build the Habit":{run:45,walk:90,rounds:8,note:"5 min brisk walk warm-up • 8 × (45 sec easy jog + 90 sec walk) • 5 min easy walk cool-down. Keep the jog deliberately slow."},
+"Jog 3 — Longer Jog Repeats":{run:60,walk:90,rounds:8,note:"5 min brisk walk warm-up • 8 × (60 sec easy jog + 90 sec walk) • 5 min easy walk cool-down. Progress only if Jog 2 feels controlled."},
+"Jog 4 — Towards Running":{run:90,walk:90,rounds:8,note:"5 min brisk walk warm-up • 8 × (90 sec easy jog + 90 sec walk) • 5 min easy walk cool-down. There is no need to run continuously yet."}
 };
 let data=JSON.parse(localStorage.getItem(KEY)||"null")||{
 aim:"Build a strong, lean, capable body and become a person who runs.",
@@ -50,17 +84,19 @@ function nav(active){document.getElementById("nav").innerHTML=["Today","Progress
 function render(page="Today"){nav(page);({Today:today,Progress:progress,Challenge:challenge,Photos:photos}[page])(document.getElementById("app"))}
 const metric=(a,b)=>`<div class="metric"><div class="muted">${a}</div><div class="big">${b}</div></div>`;
 function today(a){
-let strength=weekly("Gym A — Lower")+weekly("Gym B — Upper + Core")+weekly("Gym C — Full Body")+weekly("Gym D — Lower + Core + Incline");
-let jog=weekly("Jog 1")+weekly("Jog 2");
+let strength=data.sessions.filter(x=>x.type.startsWith("Gym")&&new Date(x.date)>=weekStart()).length;
+let jog=data.sessions.filter(x=>x.type.startsWith("Jog")&&new Date(x.date)>=weekStart()).length;
 a.innerHTML=`<section class="card"><h2>Your aim</h2><p>${esc(data.aim)}</p><span class="pill">12-week challenge</span><p><b>${esc(data.challenge)}</b></p></section>
 <section class="card"><h2>This week</h2><div class="grid">${metric("Strength",strength+"/3")}${metric("Jogging",jog+"/2")}${metric("Mobility",weekly("Mobility")+"/4")}${metric("Movement",weekly("Movement")+"/7")}</div></section>
-<section class="card"><h2>Start a session</h2><div class="grid">${Object.keys(plan).map(x=>`<button class="secondary" onclick="start('${x}')">${x}</button>`).join("")}</div></section>
+<section class="card"><h2>Strength workouts</h2><div class="grid">${Object.keys(plan).filter(x=>x.startsWith("Gym")).map(x=>`<button class="secondary" onclick="start('${x}')">${x}</button>`).join("")}</div></section>
+<section class="card"><h2>Beginner jogging</h2><p class="muted">Progress slowly. Repeat a level as often as you need; easy jogging counts.</p><div class="grid">${Object.keys(plan).filter(x=>x.startsWith("Jog")).map(x=>`<button class="secondary" onclick="start('${x}')">${x}</button>`).join("")}</div></section>
 <section class="card"><h2>Quick recovery</h2><div class="grid"><button class="secondary" onclick="quick('Mobility')">🧘 Mobility</button><button class="secondary" onclick="quick('Movement')">🚶 Movement</button><button class="secondary" onclick="render('Photos')">📸 Weekly photo</button><button class="secondary" onclick="quick('Rest')">😴 Rest day</button></div></section>`;
 }
 function quick(type){data.sessions.push({date:new Date().toISOString(),type,inputs:{},note:""});save();render("Today")}
 function start(type){
+let rp=runPlans[type];
 document.getElementById("app").innerHTML=`<section class="card"><div class="row"><div><h2>${type}</h2><small>Log what you actually do. You can stop early.</small></div><button class="secondary" onclick="render('Today')">Exit</button></div>
-${plan[type].map((e,i)=>e==="Run/walk intervals"?`<div class="exercise"><h3>${e}</h3><div class="grid"><label>Run sec<input id="run" type="number" value="30"></label><label>Walk sec<input id="walk" type="number" value="90"></label><label>Rounds<input id="rounds" type="number" value="6"></label><label>Completed<input id="done" type="number" value="0"></label></div></div>`:e==="Incline treadmill"?`<div class="exercise"><h3>${e}</h3><small>15 min finish: 3 min at 4–5% • 4 min at 7% • 4 min at 9–10% • 2 min at 6% • 2 min at 2–3%</small><div class="grid" style="margin-top:10px"><label>Minutes<input id="tm_min" type="number" value="15"></label><label>Top incline %<input id="tm_inc" type="number" step=".5" value="10"></label><label>Speed<input id="tm_speed" type="number" step=".1" placeholder="km/h"></label><label>Completed<input id="tm_done" type="number" min="0" max="1" value="1"></label></div></div>`:`<div class="exercise"><h3>${e}</h3><div class="sets">${[1,2,3].map(n=>`<span>${n}</span><input id="w${i}_${n}" type="number" step=".5" placeholder="kg"><input id="r${i}_${n}" type="number" placeholder="reps">`).join("")}</div></div>`).join("")}
+${plan[type].map((e,i)=>e==="Run/walk intervals"?`<div class="exercise"><h3>${e}</h3><small>${rp?.note||"Keep it easy and conversational."}</small><div class="grid" style="margin-top:10px"><label>Run sec<input id="run" type="number" value="${rp?.run||30}"></label><label>Walk sec<input id="walk" type="number" value="${rp?.walk||90}"></label><label>Rounds<input id="rounds" type="number" value="${rp?.rounds||6}"></label><label>Completed<input id="done" type="number" value="0"></label></div></div>`:e==="Incline treadmill"?`<div class="exercise"><h3>${e}</h3><small>15 min finish: 3 min at 4–5% • 4 min at 6% • 4 min at 8% • 2 min at 10% • 2 min at 2–3%. If you need the rails, lower the incline.</small><div class="grid" style="margin-top:10px"><label>Minutes<input id="tm_min" type="number" value="15"></label><label>Top incline %<input id="tm_inc" type="number" step=".5" value="10"></label><label>Speed<input id="tm_speed" type="number" step=".1" placeholder="km/h"></label><label>Completed<input id="tm_done" type="number" min="0" max="1" value="1"></label></div></div>`:`<div class="exercise"><h3>${e}</h3>${exerciseNotes[type]?.[e]?`<small>${exerciseNotes[type][e]}</small>`:""}<div class="sets" style="margin-top:8px">${[1,2,3].map(n=>`<span>${n}</span><input id="w${i}_${n}" type="number" step=".5" placeholder="kg"><input id="r${i}_${n}" type="number" placeholder="reps/sec">`).join("")}</div></div>`).join("")}
 <div class="exercise"><label>How did it feel?<input id="note" placeholder="strong, tired, enjoyable..."></label></div>
 <button class="primary" onclick="finish('${type}')">FINISH SESSION</button></section>`;
 }
